@@ -3,6 +3,7 @@ import prometheus_client as prom
 import requests
 import time
 from bs4 import BeautifulSoup
+import threading
 
 STOCKS_LIST = ["AAPL", "MSFT", "GOOG", "S"]
 MAIN_PAGE_URL = "https://finance.yahoo.com/quote/{0}?p={0}"
@@ -13,7 +14,7 @@ SYMBOL_VALUES = {'B': 1, 'T': 10 ** 3}
 
 
 def get_stock_price(stock_symbol):
-    resp = requests.get(MAIN_PAGE_URL.format(stock_symbol))
+    resp = requests.get(MAIN_PAGE_URL.format(stock_symbol), headers={'Cache-Control': 'no-cache', "Pragma": "no-cache"})
     soup = BeautifulSoup(resp.text, "lxml")
     price_field = soup.findAll('div', {'class': 'D(ib) Mend(20px)'})
     for div in price_field:
@@ -25,7 +26,7 @@ def get_stock_price(stock_symbol):
 
 
 def get_stock_market_cap(stock_symbol):
-    resp = requests.get(MAIN_PAGE_URL.format(stock_symbol))
+    resp = requests.get(MAIN_PAGE_URL.format(stock_symbol), headers={'Cache-Control': 'no-cache', "Pragma": "no-cache"})
     soup = BeautifulSoup(resp.text, "lxml")
     market_cap = soup.findAll('div', {'class': 'D(ib) W(1/2) Bxz(bb) Pstart(12px) Va(t) ie-7_D(i) ie-7_Pos(a)'
                                                ' smartphone_D(b) smartphone_W(100%) smartphone_Pstart(0px)'
@@ -42,16 +43,27 @@ def get_stock_market_cap(stock_symbol):
         break
 
 
-def get_stock_info():
+def get_single_stock_info(stock_symbol):
+    get_stock_price(stock_symbol=stock_symbol)
+    get_stock_market_cap(stock_symbol=stock_symbol)
+
+
+def get_all_stock_info():
     while True:
+        threads = []
+
         for stock in STOCKS_LIST:
-            get_stock_market_cap(stock_symbol=stock)
-            get_stock_price(stock_symbol=stock)
-        time.sleep(30)
+            t = threading.Thread(target=get_single_stock_info, args=[stock])
+            t.start()
+            threads.append(t)
+        for thread in threads:
+            thread.join()
+            get_single_stock_info(stock_symbol=stock)
+        time.sleep(10)
 
 
 if __name__ == '__main__':
-    prom.start_http_server(80)
+    prom.start_http_server(8000)
     logging.basicConfig(level=logging.INFO)
-    get_stock_info()
+    get_all_stock_info()
 
