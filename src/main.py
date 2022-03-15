@@ -9,9 +9,9 @@ import os
 
 MAIN_PAGE_URL = "https://finance.yahoo.com/quote/{0}?p={0}"
 STOCK_PRICE_GAUGE = prom.Gauge('stock_price', 'Stock price in USD', ["stock_symbol"])
-MARKET_CAP_GAUGE = prom.Gauge('stock_market_cap', 'Stock  cap in billions', ["stock_symbol"])
+MARKET_CAP_GAUGE = prom.Gauge('stock_market_cap', 'Stock cap in billions', ["stock_symbol"])
 EPS_GAUGE = prom.Gauge('stock_eps', 'Stock EPS', ["stock_symbol"])
-VOLUME_GAUGE = prom.Gauge('stock_volume', 'Stock Volume', ["stock_symbol"])
+VOLUME_GAUGE = prom.Gauge('stock_volume', 'Stock Volume in thousands', ["stock_symbol"])
 SYMBOL_VALUES = {'B': 1, 'T': 10 ** 3}
 user_agent_headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
 
@@ -45,7 +45,8 @@ def get_stock_volume(stock_symbol, soup):
                                                ' smartphone_Bdc($seperatorColor)'})
     for div in market_cap:
         rows = div.findAll('tr')
-        stock_volume = int(rows[6].contents[1].text.replace(',', ''))
+        # Stock volume in thousands
+        stock_volume = int(rows[6].contents[1].text.replace(',', '')) / 1000
         VOLUME_GAUGE.labels(stock_symbol=stock_symbol).set(stock_volume)
         logging.info("{} daily volume: {}".format(stock_symbol, stock_volume))
         break
