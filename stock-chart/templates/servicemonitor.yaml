@@ -1,0 +1,14 @@
+{{- if .Values.prometheus.monitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "stock-chart.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ template "stock-chart.name" . }}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ template "stock-chart.name" . }}
+  endpoints:
+    - port: http
+{{- end }}
