@@ -6,9 +6,9 @@ replicaCount: 1
 
 image:
   repository: yonahdissen/stock-info
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "main"
+  tag: "v0.2.0"
 
 imagePullSecrets: []
 nameOverride: ""
