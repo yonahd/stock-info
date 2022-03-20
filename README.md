@@ -34,3 +34,6 @@ stock_volume{stock_symbol="VMW"} 1809.282
 stock_volume{stock_symbol="GOOG"} 1512.693
 stock_volume{stock_symbol="AAPL"} 108732.111
 ```
+
+Grafana dashboard for visualizing stock metrics:
+https://grafana.com/grafana/dashboards/15956
