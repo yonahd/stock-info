@@ -69,9 +69,9 @@ def get_all_stock_info():
             t = threading.Thread(target=get_single_stock_info, args=[stock])
             t.start()
             threads.append(t)
-            for thread in threads:
-                thread.join()
-                get_single_stock_info(stock_symbol=stock)
+        for thread in threads:
+            thread.join()
+            get_single_stock_info(stock_symbol=stock)
         time.sleep(10)
 
 
