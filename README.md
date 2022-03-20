@@ -5,7 +5,7 @@ Application for scraping stock prices and information regarding the stock.
 
 ### Run in Docker
 ```
-$ docker run -d -e STOCKS_LIST=["AAPL", "MSFT", "GOOG", "VMW"]  -p 8000:8000 ghcr.io/yonahd/stock-info:latest
+$ docker run -d -e STOCKS_LIST=["AAPL", "MSFT", "GOOG", "VMW"]  -p 8000:8000 yonahdissen/stock-info:latest
 ```
 ##### Expected metrics format:
 ```
