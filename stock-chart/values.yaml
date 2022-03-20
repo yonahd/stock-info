@@ -5,10 +5,10 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/yonahd/stock-info
+  repository: yonahdissen/stock-info
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v0.1.0"
+  tag: "main"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -55,6 +55,8 @@ resources: {}
   # requests:
   #   cpu: 100m
   #   memory: 128Mi
+
+stock_list: '[\"MSFT\" , \"TSLA\"]'
 
 nodeSelector: {}
 
