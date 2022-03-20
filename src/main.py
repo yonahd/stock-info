@@ -12,6 +12,7 @@ STOCK_PRICE_GAUGE = prom.Gauge('stock_price', 'Stock price in USD', ["stock_symb
 MARKET_CAP_GAUGE = prom.Gauge('stock_market_cap', 'Stock cap in billions', ["stock_symbol"])
 EPS_GAUGE = prom.Gauge('stock_eps', 'Stock EPS', ["stock_symbol"])
 VOLUME_GAUGE = prom.Gauge('stock_volume', 'Stock Volume in thousands', ["stock_symbol"])
+DIVIDEND_GAUGE = prom.Gauge('stock_dividend', 'Stock dividend', ["stock_symbol"])
 SYMBOL_VALUES = {'B': 1, 'T': 10 ** 3}
 user_agent_headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
 
@@ -36,6 +37,11 @@ def get_stock_market_cap(stock_symbol, soup):
         eps = rows[3].contents[1].text
         EPS_GAUGE.labels(stock_symbol=stock_symbol).set(float(eps))
         logging.info("{} EPS: {}".format(stock_symbol, eps))
+        dividend = rows[5].contents[1].text.split('(')[0]
+        if "N/A" in dividend:
+            dividend = 0
+        DIVIDEND_GAUGE.labels(stock_symbol=stock_symbol).set(float(dividend))
+        logging.info("{} DIVIDEND: {}".format(stock_symbol, dividend))
         break
 
 
